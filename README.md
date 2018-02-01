@@ -1,76 +1,69 @@
-# React Parcel Example
+# moox 
+moox 是基于 redux 开发的高性能状态管理机。
 
-A minimum viable React app with [Parcel Bundler](https://parceljs.org)
+## 安装
+npm install moox
 
-**What's inside?**
+## 用法
+moox 封装了 redux 的 action, reducer 到一个文件。如下面示例代码，model.state 是初始化的 state, 带 Action 字符串后缀的函数是一个 action，比较特殊的是，action 函数不需要写繁琐的 type, 所有 actionType 都会自动生成。MODEL 对象里的 reducers 存储纯函数 reducer，比较特殊的是，moox reducer 不需要返回新的 state,直接修改函数参数传入的 state,即可自动化生成新的 state。
 
-* `parcel-bundler`
-* `react`
-* `react-dom`
-* `babel-preset-react-app`
-* `autoprefixer`
+## Example
 
-> Also [checkout out the TypeScript branch](https://github.com/jaredpalmer/react-parcel-example/tree/typescript)
-
-## Getting started
-
-Clone and install deps
-
-```
-git clone git@github.com:jaredpalmer/react-parcel-example.git
-cd react-parcel-example
-yarn
-yarn start
-```
-
-Then open `http://localhost:1234` and edit `index.js` and press save. Parcel
-will automagically hot reload you files whenever you make changes.
-
-## Building for Production
-
-```
-npm run build
-```
-
-This will compile your JS and copy your `index.html` to the `dist` folder which
-you can deploy wherever as a good ol' webpage.
-
-## CSS
-
-[Parcel uses PostCSS plugins to manage CSS assets](https://parceljs.org/transforms.html#postcss).
-I've included `autoprefixer` for vendor prefixing with the same setup as
-`create-react-app`. You can find and modify the PostCSS setup in `package.json`.
-If you'd rather keep your PostCSS setup in a dotfile, you can delete the
-`postcss` key from `package.json`, and place its contents in a `.postcssrc` file
-too.
-
-## Folder structure and relative paths
-
-Keeping everything in the root directory obviously won't scale past a point.
-Parcel is very flexible about folder structure, but there are a few gotchas.
-
-### Moving JS entry
-
-When you do move index.js just make sure to update the `<script>` tag in
-`index.html` so that it points to the correct relative path.
-
-For example, if you want to move `index.js` to `src/index.js`, you would need
-make the following change to `index.html`:
+model 层代码：
+```js
+const model = {
+  state: {
+    list: [1],
+    status: 0
+  },
+  requestStatusAction: () => { },
+  addUserAction: () => (
+    {
+      payload: new Promise((resolve) => {
+        setTimeout(function () {
+          resolve(100)
+        }, 1000)
+      })
+    }),  
+  reducers: {
+    addUserAction: function (state, action) {
+      state.list.push(Math.round(Math.random() * 1000))
+      state.status = 0
+    },
+    requestStatusAction: function (state, action) {
+      state.status = 1
+    }
+  }
+}
 
 ```
-<   <script src="./index.js"></script>
----
->   <script src="./src/index.js"></script>
+
+组件层跟 react-redux 用法一样：
+```js
+const App = (props)=>{  
+  const handleClick = () =>{
+    if(props.user.status === 1) return;
+    props.requestStatusAction()    
+    props.addUserAction()  
+  }
+
+  return <div>
+    <div><button  onClick={handleClick}>Add Random Number</button>    
+      {props.user.status === 1? 'loading...' : ''}
+    </div>
+    
+    {props.user.list.map((item, index)=>{
+      return <div key={index}>{item}</div>
+    })}
+  </div>
+}
+
+
+export default connect((state)=>({
+  user: state.user
+}), {
+  addUserAction: Model.user.addUserAction,
+  requestStatusAction: Model.user.requestStatusAction
+})(App)
+
 ```
-
-### Moving `index.html`
-
-If you want to move `index.html`, you will need to update your npm scripts in
-`package.json` with the new relative path.
-
-## Deployment
-
-Refer to the deployment guide in `create-react-app`, just note that you will
-need to account for the fact that Parcel builds out to a `dist` directory, while
-CRA builds to a `build` directory. You can make it identical by adding
-`--out-dir build` to both `start` and `build` npm tasks in `package.json`.

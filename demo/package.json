@@ -1,0 +1,41 @@
+{
+  "name": "moox-demo",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "NODE_ENV=development parcel index.html -d dist/"
+  },
+  "dependencies": {
+    "immer": "^1.0.0",
+    "redux": "^3.7.2",
+    "redux-promise": "^0.5.3"
+  },
+  "postcss": {
+    "modules": false,
+    "plugins": {
+      "autoprefixer": {
+        "browsers": [
+          ">1%",
+          "last 4 versions",
+          "Firefox ESR",
+          "not ie < 9"
+        ],
+        "flexbox": "no-2009"
+      }
+    }
+  },
+  "devDependencies": {
+    "autoprefixer": "^7.2.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.0",
+    "cross-env": "^5.1.1",
+    "parcel-bundler": "latest",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.6"
+  },
+  "engines": {
+    "node": ">= 8.0",
+    "npm": ">= 6.2"
+  }
+}
