@@ -1,6 +1,6 @@
 {
   "name": "moox-demo",
-  "version": "1.0.0",
+  "version": "1.0.0-beta1",
   "license": "MIT",
   "scripts": {
     "start": "NODE_ENV=development parcel index.html -d dist/"
