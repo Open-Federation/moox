@@ -10,13 +10,16 @@ moox 封装了 redux 的 action, reducer 到一个文件。
 首先调用 moox(models) 初始化，models 对象结构是
 ```
 {
-    modelName: model
+  modelName1: model1,
+  modelName2: model2,
+  modelName3: model3,
+  ...
 }
 ```
 
-如下面示例代码，model.state 是初始化的 state, 带 Action 字符串后缀的函数是一个 action，比较特殊的是，action 函数不需要写繁琐的 type, 所有 actionType 都会自动生成。
+model 的结构如下面示例代码，model.state 是初始化的 state, 带 Action 字符串后缀的 key 是一个 action。如果 action 没有参数，可以赋值为 null，如果 action 需要返回参数，可返回一个对象，参数名为对象的 key。
 
-model.reducers 存储纯函数 reducer，跟 redux-reducer 不一样的是 moox-reducer 不需要返回新的 state,直接修改函数参数传入的 state,即可自动化生成新的 state。
+model.reducers 存储纯函数 reducer，跟 redux 的 reducer 不一样的是 moox 的 reducer 不需要返回新的 state,直接修改函数参数传入的 state,即可自动化生成新的 state。
 
 ## Example
 
@@ -27,7 +30,7 @@ const model = {
     list: [1],
     status: 0
   },
-  requestStatusAction: () => { },
+  requestStatusAction: null,
   addUserAction: () => (
     {
       payload: new Promise((resolve) => {
