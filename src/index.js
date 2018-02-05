@@ -1,7 +1,8 @@
 
 import {combineReducers, createStore as _createStore, applyMiddleware} from 'redux'
-import promiseMiddleware from 'redux-promise';
+import promiseMiddleware from './promise';
 import produce from "immer"
+import {extend} from "./utils"
 
 const ActionSuffix = 'Action'
 const CONFIG = {}
@@ -39,7 +40,7 @@ function loadActions(name, model){
       actions[item] = function actionCreator(...args){
         let action;
         if(typeof model[item] === 'function'){
-          action = model[item].apply(this, ...args)
+          action = model[item].apply(this, args)
           action = action ? action : {}
         }else action = {}
         action.type = getType(name, item)
@@ -57,7 +58,7 @@ function moox(models, config = {
   immer: true
 }){
   const keys = Object.keys(models);  
-  Object.assign(CONFIG, config)
+  extend(CONFIG, config)
   const reducers = {}
   let store;
   const middleware = defaultMiddleware.concat(config.middleware)

@@ -7,12 +7,14 @@
     "build": "NODE_ENV=production make clean build"
   },
   "dependencies": {
+    "flux-standard-action": "^2.0.1",
     "immer": "^1.0.0",
     "redux": "^3.7.2",
     "redux-promise": "^0.5.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1"
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1"
   }
 }
