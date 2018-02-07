@@ -1,6 +1,6 @@
 export default {
   state: {
-    list: [200, 300],
+    list: ['tom', 'xiaoming'],
     status: 0,
     filterText: ''
   },
@@ -38,11 +38,11 @@ export default {
       state.currentEditIndex = action.index
     },
     addUserAction: function (state, action) {
-      state.list.push(Math.round(Math.random() * 1000))
+      state.list.push(getRandomName())
       state.status = 0
     },
     addUserSyncAction: function(state, action){
-      state.list.push(Math.round(Math.random() * 1000))
+      state.list.push(getRandomName(5))
     },
     requestStatusAction: function (state, action) {
       state.status = 1
@@ -51,4 +51,10 @@ export default {
       state.list.splice(action.index, 1)
     }
   }
+}
+
+function getRandomName(len=4){
+  let str = ''
+  while(len--) str += String.fromCharCode(97 + Math.ceil(Math.random()* 25))
+  return str
 }
