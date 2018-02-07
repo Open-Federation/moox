@@ -4,7 +4,8 @@
   "license": "MIT",
   "main": "lib/index.js",
   "scripts": {
-    "build": "NODE_ENV=production make clean build"
+    "build": "NODE_ENV=production make clean build",
+    "test": "./node_modules/.bin/ava"
   },
   "dependencies": {
     "flux-standard-action": "^2.0.1",
@@ -12,8 +13,20 @@
     "redux": "^3.7.2"
   },
   "devDependencies": {
+    "ava": "^0.24.0",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-0": "^6.24.1"
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.9.0"
+  },
+  "ava":{
+    "require": [
+			"babel-register"
+		],
+    "babel": "inherit",
+    "files": [
+			"test/**",
+			"!test/fixtures/**"
+		]
   }
 }
