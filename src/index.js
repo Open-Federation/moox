@@ -72,7 +72,7 @@ function moox(models, config = {
       return store;
     },
     getReducers: function(){
-      return combineReducers(reducers)
+      return reducers
     }
   }
 
