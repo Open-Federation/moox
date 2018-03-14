@@ -4,6 +4,7 @@ import promiseMiddleware from './promise';
 import produce from "immer"
 import {extend} from "./utils"
 
+const window = this;
 const ActionSuffix = 'Action'
 const CONFIG = {}
 
@@ -63,12 +64,15 @@ function moox(models, config = {
   let store;
   const middleware = defaultMiddleware.concat(config.middleware)
   const MOOX = {
-    getStore: function(){
+    getStore: function(enhancer){
       if(store) return store;
       let finalCreateStore;
       finalCreateStore = applyMiddleware(...middleware)(_createStore);
-      store = finalCreateStore(combineReducers(reducers))
+      store = finalCreateStore(combineReducers(reducers), enhancer)
       return store;
+    },
+    getReducers: function(){
+      return combineReducers(reducers)
     }
   }
 
