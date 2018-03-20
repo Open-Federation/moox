@@ -4,7 +4,6 @@ import promiseMiddleware from './promise';
 import produce from "immer"
 import {extend} from "./utils"
 
-const window = this;
 const ActionSuffix = 'Action'
 const CONFIG = {}
 
@@ -16,70 +15,73 @@ function getActionByTypeName(type){
   return type.split('/')[2]
 }
 
+function isPromise(val) {
+  return val && typeof val.then === 'function';
+}
+
 function loadModel(name, model){
   const initialState = model.state;
   return  function reducer(state = initialState, action){
+    let params = action.params;
     let actionFn = getActionByTypeName(action.type);
-    if(model.reducers[actionFn]){
+    if(model[actionFn]){
       if(CONFIG.immer){
-        return produce(state, nextState=>{
-          return model.reducers[actionFn](nextState, action, state)
+        return produce(state, draftState=>{          
+          return model[actionFn](draftState, params, state)
         })
       }
-      return model.reducers[actionFn](state, action)
+      return model[actionFn](state, params)
     }    
     return state
   }
 }
 
 function loadActions(name, model){
+  const store = this;
   const keys = Object.keys(model);
   const actions = {}
   keys.forEach(item=>{
     let len = item.length;
     if(item.substr(len-6) === ActionSuffix){
-      actions[item] = function actionCreator(...args){
-        let action;
-        if(typeof model[item] === 'function'){
-          action = model[item].apply(this, args)
-          action = action ? action : {}
-        }else action = {}
-        action.type = getType(name, item)
-        return action
+      actions[item] = function actionCreator(params){
+        return store.dispatch({
+          type: getType(name, item),
+          params
+        })
       }
     }
   })
   return actions;
 }
 
-const defaultMiddleware = [promiseMiddleware]
+const defaultMiddleware = []
 
 function moox(models, config = {
   middleware:[],
   immer: true
 }){
+  const MOOX = {}
+  const reducers = {}
+  let   store;
+
   const keys = Object.keys(models);  
   extend(CONFIG, config)
-  const reducers = {}
-  let store;
-  const middleware = defaultMiddleware.concat(config.middleware)
-  const MOOX = {
-    getStore: function(enhancer){
-      if(store) return store;
-      let finalCreateStore;
-      finalCreateStore = applyMiddleware(...middleware)(_createStore);
-      store = finalCreateStore(combineReducers(reducers), enhancer)
-      return store;
-    },
-    getReducers: function(){
-      return reducers
-    }
-  }
 
   keys.forEach(name=>{
     reducers[name] = loadModel(name, models[name])
-    MOOX[name] = loadActions(name, models[name])
   })
+
+  MOOX.getReducers = ()=> reducers;
+
+  const middleware = defaultMiddleware.concat(config.middleware)
+  store = applyMiddleware(...middleware)(_createStore)(combineReducers(reducers), config.preloadedState, config.enhancer);
+  
+  MOOX.getStore = ()=> store
+
+  keys.forEach(name=>{
+    MOOX[name] = loadActions.call(store, name, models[name])
+  })
+  
   return MOOX;
 }
 

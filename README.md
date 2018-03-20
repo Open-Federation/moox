@@ -17,9 +17,7 @@ moox 封装了 redux 的 action, reducer 到一个文件。
 }
 ```
 
-model 的结构如下面示例代码，model.state 是初始化的 state, 带 Action 字符串后缀的 key 是一个 action。如果 action 没有参数，可以赋值为 null，如果 action 需要返回参数，可返回一个对象，参数名为对象的 key。
-
-model.reducers 存储纯函数 reducer，跟 redux 的 reducer 不一样的是 moox 的 reducer 不需要返回新的 state,直接修改函数参数传入的 state,即可自动化生成新的 state。
+model 的结构如下面示例代码，model.state 是初始化的 state, 带 Action 字符串后缀的的函数是一个 action，action 负责计算 state 数据。
 
 ## Example
 
@@ -30,35 +28,24 @@ const model = {
     list: [1],
     status: 0
   },
-  requestStatusAction: null,
-  addUserAction: () => (
-    {
-      payload: new Promise((resolve) => {
-        setTimeout(function () {
-          resolve(100)
-        }, 1000)
-      })
-    }),  
-  reducers: {
-    addUserAction: function (state, action) {
-      state.list.push(Math.round(Math.random() * 1000))
-      state.status = 0
-    },
-    requestStatusAction: function (state, action) {
-      state.status = 1
-    }
+  addUserAction: function (state, params) {
+    state.list.push(Math.round(Math.random() * 1000))
+    state.status = 0
+  },
+  requestStatusAction: function (state, params) {
+    state.status = 1
   }
 }
 
 ```
 
-组件层跟 react-redux 用法一样：
+组件层需要调用 connect 方法绑定 state ，对 state 数据的修改，直接调用 aciton。 
 ```js
 const App = (props)=>{  
   const handleClick = () =>{
     if(props.user.status === 1) return;
-    props.requestStatusAction()    
-    props.addUserAction()  
+    Model.user.requestStatusAction()    
+    Model.user.addUserAction()
   }
 
   return <div>
@@ -75,9 +62,6 @@ const App = (props)=>{
 
 export default connect((state)=>({
   user: state.user
-}), {
-  addUserAction: Model.user.addUserAction,
-  requestStatusAction: Model.user.requestStatusAction
-})(App)
+}))(App)
 
 ```

@@ -3,16 +3,32 @@ import { connect } from 'react-redux'
 import Model from '../model'
 
 const App = (props) => {
+
   const handleClick = () => {
     if (props.user.status === 1) return;
-    props.requestStatusAction()
-    props.addUserAction()
+    Model.user.requestStatusAction()
+    setTimeout(()=>{
+      Model.user.addUserAction()
+    }, 400)
   }
-  const handleClickSync = () => props.addUserSyncAction()
-  const delUser = (index) => ()=>props.delUserAction(index)
+
+
+  const handleClickSync = () => Model.user.addUserAction()
+  const handleFilterValue = (event)=>{
+    let text = event.target.value
+    Model.user.changeFilterValueAction({
+      text
+    })
+  }
+  const delUser = (index) => ()=>Model.user.delUserAction({
+    index
+  })
   const getContent = (item, index) => {
     return <input type="text" onChange={(event) => {
-      props.changeCurrentEditUserAction(event.target.value, index)
+      Model.user.changeCurrentEditUserAction({
+        name: event.target.value,
+        index
+      })
     }} value={item} />
   }
   const list = props.user.list.filter(item=>{
@@ -22,7 +38,7 @@ const App = (props) => {
 
   return <div style={{ width: 500, margin: '100px auto' }}>
     <div >
-      <input placeholder="Filter" style={{height: 35, width: '100%', backgroundColor: '#eee'}} type="text" value={props.user.filterText} onChange={(event)=> props.changeFilterValueAction(event.target.value)} />
+      <input placeholder="Filter" style={{height: 35, width: '100%', backgroundColor: '#eee'}} type="text" value={props.user.filterText} onChange={handleFilterValue} />
     </div>
     <div>
       <button style={{ height: '40px', margin: 30 }} onClick={handleClick}>Async Add Random Number</button>
@@ -36,11 +52,4 @@ const App = (props) => {
 }
 export default connect((state) => ({
   user: state.user
-}), {
-    addUserAction: Model.user.addUserAction,
-    requestStatusAction: Model.user.requestStatusAction,
-    delUserAction: Model.user.delUserAction,
-    addUserSyncAction: Model.user.addUserSyncAction,
-    changeCurrentEditUserAction: Model.user.changeCurrentEditUserAction,
-    changeFilterValueAction: Model.user.changeFilterValueAction
-  })(App)
+}))(App)

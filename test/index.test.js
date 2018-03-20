@@ -12,7 +12,7 @@ test('moox', t=>{
 
   let store = model.getStore()
 
-  store.dispatch(model.user.addUserSyncAction())
+  model.user.addUserSyncAction()
   let state = store.getState()
   t.is(state.user.list.length, 3)
 })
