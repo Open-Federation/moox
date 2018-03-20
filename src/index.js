@@ -1,6 +1,5 @@
 
 import {combineReducers, createStore as _createStore, applyMiddleware} from 'redux'
-import promiseMiddleware from './promise';
 import produce from "immer"
 import {extend} from "./utils"
 
