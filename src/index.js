@@ -55,16 +55,16 @@ function loadActions(name, model){
 
 const defaultMiddleware = []
 
-function moox(models, config = {
-  middleware:[],
-  immer: true
-}){
+function moox(models, config = {}){
   const MOOX = {}
   const reducers = {}
   let   store;
 
   const keys = Object.keys(models);  
-  extend(CONFIG, config)
+  extend(CONFIG, {
+    middleware:[],
+    immer: true
+  },config)
 
   keys.forEach(name=>{
     reducers[name] = loadModel(name, models[name])
@@ -72,10 +72,12 @@ function moox(models, config = {
 
   MOOX.getReducers = ()=> reducers;
 
-  const middleware = defaultMiddleware.concat(config.middleware)
-  store = applyMiddleware(...middleware)(_createStore)(combineReducers(reducers), config.preloadedState, config.enhancer);
+  const middleware = defaultMiddleware.concat(CONFIG.middleware)
+  store = applyMiddleware(...middleware)(_createStore)(combineReducers(reducers), CONFIG.preloadedState, CONFIG.enhancer);
   
   MOOX.getStore = ()=> store
+
+  MOOX.getState = ()=> store.getState()
 
   keys.forEach(name=>{
     MOOX[name] = loadActions.call(store, name, models[name])
