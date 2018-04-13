@@ -5,9 +5,8 @@ moox 是基于 redux 开发的高性能状态管理机。
 npm install moox
 
 ## 用法
-moox 封装了 redux 的 action, reducer 到一个文件。
 
-首先调用 moox(models) 初始化，models 对象结构是
+首先调用 moox(models) 初始化，models 是一个 key->value 对象
 ```
 {
   modelName1: model1,
