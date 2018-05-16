@@ -64,3 +64,5 @@ export default connect((state)=>({
 }))(App)
 
 ```
+
+实际使用请参考 [demo](https://github.com/suxiaoxin/moox/tree/master/demo)
