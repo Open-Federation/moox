@@ -14,17 +14,13 @@ function getActionByTypeName(type){
   return type.split('/')[2]
 }
 
-function isPromise(val) {
-  return val && typeof val.then === 'function';
-}
-
 function loadModel(name, model){
   const initialState = model.state;
   return  function reducer(state = initialState, action){
     let params = action.params;
     let actionFn = getActionByTypeName(action.type);
     if(model[actionFn]){
-      if(CONFIG.immer){
+      if(CONFIG.immer && model.immer !== false){
         return produce(state, draftState=>{          
           return model[actionFn](draftState, params, state)
         })

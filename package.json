@@ -19,14 +19,14 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.9.0"
   },
-  "ava":{
+  "ava": {
     "require": [
-			"babel-register"
-		],
+      "babel-register"
+    ],
     "babel": "inherit",
     "files": [
-			"test/**",
-			"!test/fixtures/**"
-		]
+      "test/**",
+      "!test/fixtures/**"
+    ]
   }
 }
