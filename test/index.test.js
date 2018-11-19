@@ -16,6 +16,35 @@ test('addUser', t=>{
   t.is(state.user.list.length, 3)
 })
 
+test('manyModel', t=>{
+  let model = moox({
+    user: {
+      state: {
+        data:null
+      },
+      testAction: (state, params)=>{
+        state.data = params;
+      }
+    },
+    order: {
+      state: {
+        data: null
+      },
+      testAction: (state, params)=>{
+        state.data = params;
+      }
+    },
+  })
+
+  let store = model.getStore()
+  model.order.testAction({id: 1})
+  let state = store.getState()
+  t.deepEqual(state.order.data, {id: 1})
+  t.is(state.user.data,  null)
+  
+
+})
+
 test('preloadedState', t=>{
   let model = moox({
     user

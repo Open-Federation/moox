@@ -4,21 +4,29 @@ import produce from "immer"
 import {extend} from "./utils"
 
 const ActionSuffix = 'Action'
+const typePrefix = 'Moox'
 const CONFIG = {}
 
 function getType(modelName, actionName){
-  return 'moox/' + modelName + '/' + actionName
+  return typePrefix + '/' + modelName + '/' + actionName
 }
 
 function getActionByTypeName(type){
-  return type.split('/')[2]
+  return type.split('/')
 }
 
 function loadModel(name, model){
   const initialState = model.state;
+  model.$name = name;
   return  function reducer(state = initialState, action){
     let params = action.params;
-    let actionFn = getActionByTypeName(action.type);
+    let types = getActionByTypeName(action.type);
+    if(types[0] !== typePrefix){
+      return state;
+    }else if(types[1] !== model.$name){
+      return state;
+    }
+    let actionFn = types[2];
     if(model[actionFn]){
       if(CONFIG.immer && model.immer !== false){
         return produce(state, draftState=>{          
