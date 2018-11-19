@@ -1,2 +1,4 @@
 demo
 src/
+.history
+package-lock.json
