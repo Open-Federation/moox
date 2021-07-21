@@ -15,7 +15,7 @@ model.js
 import moox from 'moox'
 import user from './models/user'
 
-export default moox({
+const Model = moox({
   user: {
     state: {
         list: [1],
@@ -30,7 +30,16 @@ export default moox({
     }
     }
 })
+export default Model;
 ```
+Model属性介绍：
+| name | type | description |
+| --- | --- | --- |
+| user | `Object` | 申明的user store对象，可通过 user[actionName](params) 修改状态 |
+| getProvider | `function` | 将store注入到组件上，每个页面只需在入口文件注入，其他地方不需要 |
+| useModel | `function` | 获取store的hook函数 |
+| getState | `function` | 获取当前全局state |
+
 
 ### 第二步：绑定到父组件
 
