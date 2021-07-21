@@ -1,6 +1,6 @@
 {
-  "name": "moox",
-  "version": "1.0.8",
+  "name": "@yxfe/moox",
+  "version": "1.1.0",
   "license": "MIT",
   "main": "lib/index.js",
   "scripts": {
@@ -8,16 +8,25 @@
     "test": "./node_modules/.bin/ava"
   },
   "dependencies": {
-    "flux-standard-action": "^2.0.1",
-    "immer": "^1.0.0",
-    "redux": "^3.7.2"
+    "immer": "^8.0.0"
+  },
+  "peerDependencies": {
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5"
   },
   "devDependencies": {
     "ava": "^0.24.0",
     "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-0": "^6.24.1",
-    "babel-register": "^6.9.0"
+    "babel-register": "^6.9.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5"
   },
   "ava": {
     "require": [

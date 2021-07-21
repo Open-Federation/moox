@@ -1,11 +1,17 @@
-
 import {combineReducers, createStore as _createStore, applyMiddleware} from 'redux'
 import produce from "immer"
-import {extend} from "./utils"
+import { useSelector } from 'react-redux'
+import { Provider } from 'react-redux'
+import React from 'react'
 
-const ActionSuffix = 'Action'
 const typePrefix = 'Moox'
-const CONFIG = {}
+const storeConfig = {}
+
+export function useModel(selectorReturningObject, shallowEqual){
+    return useSelector(selectorReturningObject, shallowEqual)
+}
+
+export default moox;
 
 function getType(modelName, actionName){
   return typePrefix + '/' + modelName + '/' + actionName
@@ -28,13 +34,13 @@ function loadModel(name, model){
     }
     let actionFn = types[2];
     if(model[actionFn]){
-      if(CONFIG.immer && model.immer !== false){
-        return produce(state, draftState=>{          
+      if(storeConfig.immer && model.immer !== false){
+        return produce(state, draftState=>{
           return model[actionFn](draftState, params, state)
         })
       }
       return model[actionFn](state, params)
-    }    
+    }
     return state
   }
 }
@@ -43,12 +49,11 @@ function loadActions(name, model){
   const store = this;
   const keys = Object.keys(model);
   const actions = {}
-  keys.forEach(item=>{
-    let len = item.length;
-    if(item.substr(len-6) === ActionSuffix){
-      actions[item] = function actionCreator(params){
+  keys.forEach(key=>{
+    if(typeof model[key] === 'function'){
+      actions[key] = function actionCreator(params){
         return store.dispatch({
-          type: getType(name, item),
+          type: getType(name, key),
           params
         })
       }
@@ -59,36 +64,42 @@ function loadActions(name, model){
 
 const defaultMiddleware = []
 
-function moox(models, config = {}){
-  const MOOX = {}
+function moox(models, customConfig = {}){
+  const Moox = {}
   const reducers = {}
   let   store;
 
-  const keys = Object.keys(models);  
-  extend(CONFIG, {
+  const keys = Object.keys(models);
+  Object.assign(storeConfig, {
     middleware:[],
     immer: true
-  },config)
+  },customConfig)
 
   keys.forEach(name=>{
     reducers[name] = loadModel(name, models[name])
   })
 
-  MOOX.getReducers = ()=> reducers;
+  const middleware = defaultMiddleware.concat(storeConfig.middleware)
+  store = applyMiddleware(...middleware)(_createStore)(combineReducers(reducers), storeConfig.preloadedState, storeConfig.enhancer);
 
-  const middleware = defaultMiddleware.concat(CONFIG.middleware)
-  store = applyMiddleware(...middleware)(_createStore)(combineReducers(reducers), CONFIG.preloadedState, CONFIG.enhancer);
-  
-  MOOX.getStore = ()=> store
-
-  MOOX.getState = ()=> store.getState()
+  Moox.getReducers = ()=> reducers;
+  Moox.getStore = ()=> store
+  Moox.getState = ()=> store.getState()
+  Moox.useModel = useModel;
+  Moox.getProvider = (Application)=> ()=>{
+    return React.createElement(Provider, {
+        store: store
+      }, React.createElement(Application, null));
+  }
 
   keys.forEach(name=>{
-    MOOX[name] = loadActions.call(store, name, models[name])
+    if(name.indexOf('get') === 0){
+        throw new Error(`modelName"${name}" is not a valid, the name prefix must not use "get" or "use"`)
+    }
+    Moox[name] = loadActions.call(store, name, models[name])
   })
-  
-  return MOOX;
+
+
+
+  return Moox;
 }
-
-
-module.exports = moox;
