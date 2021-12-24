@@ -1,38 +1,75 @@
 # moox
 moox 是基于 redux 开发的高性能状态管理机。
 
+> 2.0版本用 ts 重写了，正在完善用
+
 ## Install
 npm install moox
 
 ## Getting Started
 
 ### 第一步：创建 Model
-> model 的结构如下面示例代码，model.state 是初始化的 state, 带 Action 字符串后缀的的函数是一个 action，action 负责计算 state 数据。
+> model 的结构如下面示例代码，model.state 指 initialState, action 函数负责计算 state 数据。
 
 model.js
 
 ```js
-import moox from 'moox'
-import user from './models/user'
+import {IModel, IActionFun} from '../../moox'
 
-const Model = moox({
-  user: {
-    state: {
-        list: [1],
-        status: 0
+type ActionType = {
+  changeCurrentEditUser: IActionFun,
+  changeFilterValue: IActionFun,
+  changeEditIndex: IActionFun,
+  addUser: IActionFun,
+  requestStatus: IActionFun,
+  delUser: IActionFun
+
+}
+
+const config: IModel<ActionType> = {
+  state: {
+    list: ['tom', 'xiaoming'],
+    status: 0,
+    filterText: ''
+  },
+
+  actions: {
+    changeCurrentEditUser: function (state, params) {
+      state.list[params.index] = params.name;
     },
-    actions: {
-      addUserAction: function (state, params) {
-        state.list.push(Math.round(Math.random() * 1000))
-        state.status = 0
-      },
-      requestStatusAction: function (state, params) {
-          state.status = 1
-      }
+    /**
+     * paramsTypes = {
+     *  text: filterText
+     * }
+     */
+    changeFilterValue: function (state, params) {
+      console.log(555, state, params)
+      state.filterText = params.text;
+    },
+    changeEditIndex: function (state, params) {
+      state.currentEditIndex = params.index;
+    },
+    addUser: function (state, params) {
+      state.list.push(getRandomName());
+      state.status = 0;
+    },
+    requestStatus: function (state, params) {
+      state.status = 1;
+    },
+    delUser: function (state, params) {
+      state.list.splice(params.index, 1);
     }
-    }
-})
-export default Model;
+  }
+};
+
+export default config;
+
+function getRandomName(len = 4) {
+  let str = '';
+  while (len--) str += String.fromCharCode(97 + Math.ceil(Math.random() * 25));
+  return str;
+}
+
 ```
 Model属性介绍：
 | name | type | description |
