@@ -1,6 +1,8 @@
 # moox
 moox 是基于 redux 开发的高性能状态管理机。
 
+> 2.0版本用 ts 重写了，正在完善用
+
 ## Install
 npm install moox
 
