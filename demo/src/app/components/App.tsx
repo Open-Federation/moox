@@ -1,35 +1,36 @@
-import React from 'react'
 import Models from '../model'
-
 const {useModel} = Models;
+interface IState {
+  user: any
+}
 
 const App = () => {
-  const store = useModel((state) => ({
+  const store = useModel((state: IState) => ({  
     user: state.user
   }))
   const {user} = store;
   const handleClick = () => {
     if (user.status === 1) return;
-    Models.user.requestStatusAction()
+    Models.user.requestStatus()
     setTimeout(()=>{
-      Models.user.addUserAction()
+      Models.user.addUser()
     }, 400)
   }
+  
 
-
-  const handleClickSync = () => Models.user.addUserAction()
+  const handleClickSync = () => Models.user.addUser()
   const handleFilterValue = (event)=>{
-    let text = event.target.value
-    Models.user.changeFilterValueAction({
+    let text = event.target.value;
+    Models.user.changeFilterValue({
       text
     })
   }
-  const delUser = (index) => ()=>Models.user.delUserAction({
+  const delUser = (index) => ()=>Models.user.delUser({
     index
   })
   const getContent = (item, index) => {
     return <input type="text" onChange={(event) => {
-      Models.user.changeCurrentEditUserAction({
+      Models.user.changeCurrentEditUser({
         name: event.target.value,
         index
       })

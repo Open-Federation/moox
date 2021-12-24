@@ -21,12 +21,14 @@ const Model = moox({
         list: [1],
         status: 0
     },
-    addUserAction: function (state, params) {
+    actions: {
+      addUserAction: function (state, params) {
         state.list.push(Math.round(Math.random() * 1000))
         state.status = 0
-    },
-    requestStatusAction: function (state, params) {
-        state.status = 1
+      },
+      requestStatusAction: function (state, params) {
+          state.status = 1
+      }
     }
     }
 })
