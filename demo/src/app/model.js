@@ -1,4 +1,4 @@
-import moox from '../../src/index'
+import moox from '../moox'
 import user from './models/user'
 
 export default moox({
