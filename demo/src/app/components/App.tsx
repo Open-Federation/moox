@@ -1,3 +1,4 @@
+import React from 'react'
 import Models from '../model'
 const {useModel} = Models;
 interface IState {
