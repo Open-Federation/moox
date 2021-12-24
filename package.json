@@ -8,7 +8,7 @@
     "test": "ava"
   },
   "dependencies": {
-    "immer": "^8.0.0"
+    "immer": "^9.0.7"
   },
   "peerDependencies": {
     "react": "^17.0.1",
