@@ -37,11 +37,6 @@ const config: IModel<ActionType> = {
     changeCurrentEditUser: function (state, params) {
       state.list[params.index] = params.name;
     },
-    /**
-     * paramsTypes = {
-     *  text: filterText
-     * }
-     */
     changeFilterValue: function (state, params) {
       console.log(555, state, params)
       state.filterText = params.text;
