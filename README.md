@@ -9,7 +9,7 @@ npm install moox
 ## Getting Started
 
 ### 第一步：创建 Model
-> model 的结构如下面示例代码，model.state 是初始化的 state, 带 Action 字符串后缀的的函数是一个 action，action 负责计算 state 数据。
+> model 的结构如下面示例代码，model.state 指 initialState, action 函数负责计算 state 数据。
 
 model.js
 
