@@ -1,17 +1,17 @@
 # moox
-moox 是基于 redux 开发的高性能状态管理机。
+moox is a high-performance state management tool of based on redux.
 
-> 2.0版本用 ts 重写了，正在完善用
+> Version 2.0 has been rewritten with ts, and is being refactor.
 
 ## Install
+```bash
 npm install moox
+```
 
 ## Getting Started
 
-### 第一步：创建 Model
-> model 的结构如下面示例代码，model.state 指 initialState, action 函数负责计算 state 数据。
-
-model.js
+### 1.create Model
+The structure of the model is as the following sample code，state is initialState of model, action is used of calculating state。
 
 ```js
 import {createModel} from 'moox'
@@ -70,22 +70,14 @@ function getRandomName(len = 4) {
 
 
 ```
-Model属性介绍：
-| name | type | description |
-| --- | --- | --- |
-| user | `Object` | 申明的user store对象，可通过 user[actionName](params) 修改状态 |
-| getProvider | `function` | 将store注入到组件上，每个页面只需在入口文件注入，其他地方不需要 |
-| useModel | `function` | 获取store的hook函数 |
-| getState | `function` | 获取当前全局state |
 
-
-### 第二步：绑定到父组件
+### 2.Bind the component to the Provider
 
 ```js
 export default Models.getProvider(App)
 ```
 
-### 第三步，获取store
+### 3.Get store data from hook
 
 ```js
 import React from 'react'
@@ -115,13 +107,12 @@ const App = (props)=>{
 export default App;
 
 ```
->注：这里除了 hooks 用法外,也支持使用非hooks方式,请参考如下示例
+>Note: In addition to hooks usage, class are also supported here, please refer to the following example
 
 ```js
 import {connect} from 'react-redux';
 
 const changeState = ()=>{
-   //修改
    Models.user.changeStateAction({
       x: Math.random()
    })
@@ -139,6 +130,4 @@ const Home = class extends React.PureComponent{
 
 ```
 
-
-
-实际使用请参考 [demo](https://github.com/suxiaoxin/moox/tree/master/demo)
+Please refer to [demo](https://github.com/suxiaoxin/moox/tree/master/demo)
