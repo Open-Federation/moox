@@ -1,7 +1,7 @@
 # moox
 moox is a high-performance state management tool of based on redux.
 
-> version 2.0 of the project is being refactored by ts.
+> version 2.0 is refactoring by ts.
 
 ## Install
 ```bash
