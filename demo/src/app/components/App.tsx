@@ -17,8 +17,6 @@ const App = () => {
       Models.user.addUser()
     }, 400)
   }
-  
-
   const handleClickSync = () => Models.user.addUser()
   const handleFilterValue = (event)=>{
     let text = event.target.value;
@@ -32,8 +30,8 @@ const App = () => {
   const getContent = (item, index) => {
     return <input type="text" onChange={(event) => {
       Models.user.changeCurrentEditUser({
-        name: event.target.value,
-        index
+        name: event.target.value ,
+        index: index
       })
     }} value={item} />
   }

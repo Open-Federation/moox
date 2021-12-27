@@ -1,52 +1,55 @@
-import {IModel, IActionFun} from '../../moox'
+import {createModel} from '../../moox'
 
-type ActionType = {
-  changeCurrentEditUser: IActionFun,
-  changeFilterValue: IActionFun,
-  changeEditIndex: IActionFun,
-  addUser: IActionFun,
-  requestStatus: IActionFun,
-  delUser: IActionFun
-
+type StateType = {
+  list: string[],
+  status: number,
+  filterText: string,
+  currentEditIndex: number
 }
 
-const config: IModel<ActionType> = {
-  state: {
-    list: ['tom', 'xiaoming'],
-    status: 0,
-    filterText: ''
+const state : StateType = {
+  list: ['tom', 'xiaoming'],
+  status: 0,
+  filterText: '',
+  currentEditIndex: 0
+}
+
+const actions = {
+  changeCurrentEditUser: function (state: StateType, params: {
+    name: string,
+    index: number, //index of todo list 
+  }) {
+    state.list[params.index] = params.name;
   },
-
-  actions: {
-    changeCurrentEditUser: function (state, params) {
-      state.list[params.index] = params.name;
-    },
-    /**
-     * paramsTypes = {
-     *  text: filterText
-     * }
-     */
-    changeFilterValue: function (state, params) {
-      console.log(555, state, params)
-      state.filterText = params.text;
-    },
-    changeEditIndex: function (state, params) {
-      state.currentEditIndex = params.index;
-    },
-    addUser: function (state, params) {
-      state.list.push(getRandomName());
-      state.status = 0;
-    },
-    requestStatus: function (state, params) {
-      state.status = 1;
-    },
-    delUser: function (state, params) {
-      state.list.splice(params.index, 1);
-    }
+  changeFilterValue: function (state: StateType, params: {
+    text?: string
+  }) {
+    
+    console.log(555, state, params)
+    
+    state.filterText = params.text;
+  },
+  changeEditIndex: function (state: StateType, params) {
+    state.currentEditIndex = params.index;
+  },
+  addUser: function (state: StateType, params) {
+    state.list.push(getRandomName());
+    state.status = 0;
+  },
+  requestStatus: function (state: StateType, params) {
+    // state.ss
+    state.status = 1;
+  },
+  delUser: function (state: StateType, params) {
+    state.list.splice(params.index, 1);
   }
-};
+}
 
-export default config;
+
+export default createModel({
+  state, 
+  actions
+});
 
 function getRandomName(len = 4) {
   let str = '';

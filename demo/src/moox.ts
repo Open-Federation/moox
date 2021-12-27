@@ -4,32 +4,32 @@ import { useSelector } from 'react-redux'
 import { Provider } from 'react-redux'
 import * as  React from 'react'
 
-const typePrefix = 'Moox'
+const NamePrefix = 'Moox'
 
-
-export const useModel = useSelector;
-
-export default moox;
-
-function getType(modelName: string, actionName: string){
-  return typePrefix + '/' + modelName + '/' + actionName
+function getType(modelName: string, actionName: string) : string{
+  return NamePrefix + '/' + modelName + '/' + actionName
 }
-
-function getActionByTypeName(type: string){
+function getActionByTypeName(type: string): string[]{
   return type.split('/')
 }
 
-interface IInitialState{} 
-
-export interface IActionFun{
-  (draftState: any, args: any, state?: any) : void
+export interface IActionFun<ParamType>{
+  (draftState: any, params: ParamType, state?: any) : void
 }
 
-export type IModel<T extends Record<string,  IActionFun>> ={
-  state: IInitialState,  //初始化状态
-  $name?: string, //model名称
-  immer?: boolean,
-  actions: T;
+export type IModel<T, S> ={
+  state: S,  //Initinal state
+  $name?: string, //Model name, not need to manually add it
+  immer?: boolean, 
+  actions: T
+}
+
+export const createModel = <T, S>(model: IModel<T, S>)=>{
+  const {state, actions} = model;
+  return {
+    state,
+    actions
+  }
 }
 
 const defaultMiddleware: any[] = []
@@ -41,8 +41,67 @@ interface IConfig {
   enhancer?: any,
 }
 
-function moox<T extends Record<string,  any>, MS extends {
-  [modelName:string]: IModel<T>
+
+function loadModel<
+  T extends Record<string, IActionFun<P>>, 
+  S,
+  P,
+  >(name: string, model: IModel<T, S>){
+  model.$name = name;
+  return  function reducer(state: S = model.state, action: any){
+    let types = getActionByTypeName(action.type);
+    let actionName = types[2];
+    type keyType = keyof T;
+    const fn = model.actions[actionName as keyType];
+    type ParamType = Parameters<typeof fn>[1];
+    let params = action.params as ParamType;
+    
+    if(types[0] !== NamePrefix){
+      return state;
+    }else if(types[1] !== model.$name){
+      return state;
+    }
+    
+    if(fn){
+      
+      if(model.immer ){
+        return produce(state, draftState=>{
+          //@ts-ignore
+          return fn(draftState, params, state)
+        })
+      }
+      return fn(state, params)
+    }
+    return state
+  }
+}
+
+interface Ac<ParamType> {
+  (params?: ParamType) : void
+}
+
+const loadActions = <T extends Record<string, IActionFun<any>>> (store)=> (name: string, actions: T) =>{
+  const keys = Object.keys(actions);
+  
+  const res: {
+    [actionName in keyof T]?:  Ac<Parameters<T[actionName]>[1] >
+  } = {};
+  keys.forEach(key=>{
+    if(typeof actions[key] === 'function'){
+      //@ts-ignore
+      res[key] = function actionCreator(params?: Record<string, any> ){
+        return store.dispatch({
+          type: getType(name, key),
+          params
+        })
+      }
+    }
+  })
+  return res
+}
+
+function moox<T extends Record<string,  any>, S, MS extends {
+  [modelName:string]: IModel<T, S>
 }>(models: MS, customConfig: IConfig = {}){
   const reducers: any = {}
   
@@ -50,60 +109,16 @@ function moox<T extends Record<string,  any>, MS extends {
   const storeConfig : IConfig= {
     middleware:[],
     immer: true,
+    //@ts-ignore redux-dev-tools is supported by default.
+    enhancer: window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__({
+      name: document.title
+    }),
     ...customConfig
   }
 
-  function loadModel(name: string, model: IModel<T>){
-    const initialState = model.state;
-    model.$name = name;
-    return  function reducer(state = initialState, action: any){
-      let params = action.params;
-      let types = getActionByTypeName(action.type);
-      if(types[0] !== typePrefix){
-        return state;
-      }else if(types[1] !== model.$name){
-        return state;
-      }
-      let actionFn = types[2];
-      const fn: IActionFun = model.actions[actionFn];
-      if(fn){
-        const enableImmer = typeof model.immer === 'undefined' ? storeConfig.immer : model.immer;
-        if(enableImmer ){
-          return produce(state, draftState=>{
-            return fn(draftState, params, state)
-          })
-        }
-        return fn(state, params)
-      }
-      return state
-    }
-  }
-
-  interface Ac {
-    (params?: Record<string, any>) : void
-  }
-
-  const loadActions = <T> (store)=> (name: string, actions: T) =>{
-    const keys = Object.keys(actions);
-    
-    const res: {
-      [actionName in keyof T]?: Ac
-    } = {};
-    keys.forEach(key=>{
-      if(typeof actions[key] === 'function'){
-        res[key] = function actionCreator(params?: Record<string, any> ){
-          return store.dispatch({
-            type: getType(name, key),
-            params
-          })
-        }
-      }
-    })
-    return res
-  }
-
   keys.forEach((name)=>{
-    reducers[name] = loadModel(name, models[name])
+    models[name].immer = typeof models[name].immer === 'undefined' ? storeConfig.immer : models[name].immer;
+    reducers[name] = loadModel(name, models[name]);
   })
 
   const middleware = defaultMiddleware.concat(storeConfig.middleware);
@@ -113,13 +128,7 @@ function moox<T extends Record<string,  any>, MS extends {
     storeConfig.enhancer? compose(funMiddleware,storeConfig.enhancer): funMiddleware
   );
 
-  const Base: {
-    getReducers: any,
-    getStore: any,
-    getState: any,
-    useModel: any,
-    getProvider: any,
-  }  = {
+  const Base = {
     getReducers : ()=> reducers,
     getStore:()=> store,
     getState:()=> store.getState(),
@@ -134,12 +143,12 @@ function moox<T extends Record<string,  any>, MS extends {
 
   const Actions: {
     [name in keyof MS]?: {
-      [action in keyof MS[name]['actions']] : Ac
+      [action in keyof MS[name]['actions']] : Ac<Parameters<MS[name]['actions'][action]>[1] >
     }
   } = {};
   
   keys.forEach(name=>{
-    const res = loadActions<T> (store)( name, models[name].actions);
+    const res = loadActions(store)( name, models[name].actions);
     // @ts-ignore
     Actions[name] = res;
   })
@@ -151,3 +160,6 @@ function moox<T extends Record<string,  any>, MS extends {
 
   return Moox
 }
+
+export const useModel = useSelector;
+export default moox;
