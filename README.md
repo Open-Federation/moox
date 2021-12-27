@@ -130,4 +130,4 @@ const Home = class extends React.PureComponent{
 
 ```
 
-Please refer to [demo](https://github.com/suxiaoxin/moox/tree/master/demo)
+For more detailed usage, please refer to [demo](https://github.com/Open-Federation/moox/tree/master/demo)
