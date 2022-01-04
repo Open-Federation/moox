@@ -22,16 +22,20 @@ test('manyModel', t=>{
       state: {
         data:null
       },
-      testAction: (state, params)=>{
-        state.data = params;
+      actions: {
+        testAction: (state, params)=>{
+          state.data = params;
+        }
       }
     },
     order: {
       state: {
         data: null
       },
-      testAction: (state, params)=>{
-        state.data = params;
+      actions:{
+        testAction: (state, params)=>{
+          state.data = params;
+        }
       }
     },
   })

@@ -1,30 +1,39 @@
+const state:{
+  list: string[],
+  status: number,
+  filterText: string
+} = {
+  list: ['tom', 'xiaoming'],
+  status: 0,
+  filterText: ''
+}
+
+
 export default {
-  state: {
-    list: ['tom', 'xiaoming'],
-    status: 0,
-    filterText: ''
-  },
-  changeCurrentEditUserAction: function(state, action){
-    state.list[action.index] = action.name
-  },
-  changeFilterValueAction: function(state, action){
-    state.filterText = action.text
-  },
-  changeEditIndexAction: function(state, action){
-    state.currentEditIndex = action.index
-  },
-  addUserAction: function (state, action) {
-    state.list.push(getRandomName())
-    state.status = 0
-  },
-  addUserSyncAction: function(state, action){
-    state.list.push(getRandomName(5))
-  },
-  requestStatusAction: function (state, action) {
-    state.status = 1
-  },
-  delUserAction: function(state, action){
-    state.list.splice(action.index, 1)
+  state,
+  actions: {
+    changeCurrentEditUserAction: function(state, action){
+      state.list[action.index] = action.name
+    },
+    changeFilterValueAction: function(state, action){
+      state.filterText = action.text
+    },
+    changeEditIndexAction: function(state, action){
+      state.currentEditIndex = action.index
+    },
+    addUserAction: function (state, action) {
+      state.list.push(getRandomName())
+      state.status = 0
+    },
+    addUserSyncAction: function(state, action){
+      state.list.push(getRandomName(5))
+    },
+    requestStatusAction: function (state, action) {
+      state.status = 1
+    },
+    delUserAction: function(state, action){
+      state.list.splice(action.index, 1)
+    }
   }
 }
 
