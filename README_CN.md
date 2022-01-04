@@ -1,19 +1,17 @@
 # moox
-moox is a high-performance state management tool of based on redux.
+moox 是基于 redux 的高性能状态管理库
 
-[中文文档](README_CN.md)
-
-> version 2.0 is refactoring by ts.
+> 2.0版本正在使用 ts 重构;
 
 ## Install
 ```bash
 npm install moox
 ```
 
-## Getting Started
+## 指南
 
-### 1.create Model
-The structure of the model is as the following sample code，state is initialState of model, action is used of calculating state。
+### 1.创建 Model
+Model 结构如下面的代码所示，state 是 Model 初始化 state, action 负责计算 state
 
 ```js
 import {createModel} from 'moox'
@@ -109,7 +107,7 @@ const App = (props)=>{
 export default App;
 
 ```
->Note: class components example:
+>class组件用法如下：
 
 ```js
 import {connect} from 'react-redux';
