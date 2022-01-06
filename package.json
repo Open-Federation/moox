@@ -1,60 +1,128 @@
 {
   "name": "moox",
-  "version": "2.0.0-beta.0",
-  "license": "MIT",
-  "main": "lib/index.js",
+  "version": "2.0.0",
+  "jsnext:source": "./src/index.ts",
+  "types": "./dist/types/index.d.ts",
+  "main": "./dist/js/node/index.js",
+  "module": "./dist/js/treeshaking/index.js",
+  "jsnext:modern": "./dist/js/modern/index.js",
   "scripts": {
-    "build": "NODE_ENV=production make clean build",
-    "test": "ava"
+    "prepare": "modern build",
+    "prepublishOnly": "modern build --platform",
+    "dev": "modern dev",
+    "build": "modern build",
+    "reset": "del-cli node_modules",
+    "lint": "modern lint",
+    "change": "modern change",
+    "bump": "modern bump",
+    "pre": "modern pre",
+    "release": "modern release",
+    "new": "modern new",
+    "test": "modern test --passWithNoTests"
   },
+  "engines": {
+    "node": ">=14.17.6"
+  },
+  "eslintConfig": {
+    "extends": [
+      "@modern-js"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "node --max_old_space_size=8192 ./node_modules/eslint/bin/eslint.js --fix --color --cache --quiet",
+      "git add"
+    ],
+    "*.{js,jsx,mjs,mjsx,cjs,cjsx}": [
+      "node --max_old_space_size=8192 ./node_modules/eslint/bin/eslint.js --fix --color --cache --quiet",
+      "git add"
+    ]
+  },
+  "eslintIgnore": [
+    "node_modules/",
+    "dist/"
+  ],
   "dependencies": {
-    "immer": "^9.0.7"
+    "@babel/runtime": "^7"
   },
   "peerDependencies": {
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-redux": "^7.2.2",
-    "redux": "^4.0.5"
+    "react": "^17",
+    "immer": "^9",
+    "react-dom": "^17",
+    "react-redux": "^7",
+    "redux": "^4"
   },
-  "keywords": [
-    "TypeScript"
-  ],
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.8.3",
-    "@babel/plugin-proposal-decorators": "^7.8.3",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.12.1",
-    "@babel/plugin-proposal-object-rest-spread": "^7.9.6",
-    "@babel/plugin-proposal-optional-chaining": "^7.12.1",
-    "@babel/plugin-transform-runtime": "^7.11.5",
-    "@babel/preset-env": "^7.16.5",
-    "@babel/preset-react": "^7.8.3",
-    "@babel/preset-typescript": "^7.9.0",
-    "@babel/register": "^7.0.0",
-    "@types/react": "^17.0.0",
-    "ava": "^4.0.0",
-    "babel-eslint": "^10.0.3",
-    "babel-loader": "^8.2.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-redux": "^7.2.2",
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-decorators": "^7.12.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
+    "@babel/plugin-transform-react-display-name": "^7.12.1",
+    "@babel/plugin-transform-react-jsx": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@modern-js/module-tools": "^1.0.0",
+    "@modern-js/plugin-jarvis": "^1.0.0",
+    "@modern-js/plugin-testing": "^1.0.0",
+    "@rollup/plugin-babel": "^5.2.1",
+    "@rollup/plugin-commonjs": "^15.1.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-replace": "^2.3.3",
+    "@testing-library/jest-dom": "^5.11.5",
+    "@testing-library/jest-native": "^3.4.3",
+    "@testing-library/react": "^12.0.0",
+    "@testing-library/react-hooks": "^3.4.2",
+    "@testing-library/react-native": "^7.1.0",
+    "@types/jest": "^26.0.9",
+    "@types/node": "^14",
+    "@types/react": "^17",
+    "@types/react-dom": "^17",
+    "@types/react-is": "^17.0.1",
+    "@types/react-native": "^0.64.12",
+    "@types/react-redux": "^7.1.18",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.9.0",
+    "babel-eslint": "^10.1.0",
+    "babel-jest": "^26.6.1",
+    "codecov": "^3.8.0",
+    "create-react-class": "^15.7.0",
+    "cross-env": "^7.0.2",
+    "del-cli": "^4.0.1",
+    "es3ify": "^0.2.0",
+    "eslint": "^7.12.0",
+    "eslint-config-prettier": "^6.14.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "glob": "^7.1.6",
+    "immer": "^9.0.7",
+    "jest": "^26.6.1",
+    "prettier": "^2.1.2",
+    "react": "^17",
+    "react-dom": "^16.14.0",
+    "react-native": "^0.64.1",
+    "react-redux": "^7.2.6",
+    "react-test-renderer": "^16.14.0",
     "redux": "^4.0.5",
-    "ts-node": "^10.4.0",
-    "typescript": "^4.5.4"
+    "rimraf": "^3.0.2",
+    "rollup": "^2.32.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^4"
   },
-  "ava": {
-    "extensions": [
-      "ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "babel": "inherit",
-    "files": [
-      "test/**",
-      "!test/fixtures/**"
-    ]
+  "sideEffects": [
+    "*.css",
+    "*.less",
+    "*.sass",
+    "*.scss"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "description": "moox 是基于 redux 开发的高性能状态管理机。",
   "directories": {

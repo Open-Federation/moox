@@ -20,7 +20,7 @@ export interface IActionFun<ParamType>{
 export type IModel<T, S> ={
   state: S,  //Initinal state
   $name?: string, //Model name, not need to manually add it
-  immer?: boolean, 
+  immer?: boolean,
   actions: T
 }
 
@@ -43,7 +43,7 @@ interface IConfig {
 
 
 function loadModel<
-  T extends Record<string, IActionFun<P>>, 
+  T extends Record<string, IActionFun<P>>,
   S,
   P,
   >(name: string, model: IModel<T, S>){
@@ -55,15 +55,15 @@ function loadModel<
     const fn = model.actions[actionName as keyType];
     type ParamType = Parameters<typeof fn>[1];
     let params = action.params as ParamType;
-    
+
     if(types[0] !== NamePrefix){
       return state;
     }else if(types[1] !== model.$name){
       return state;
     }
-    
+
     if(fn){
-      
+
       if(model.immer ){
         return produce(state, draftState=>{
           //@ts-ignore
@@ -80,9 +80,9 @@ interface Ac<ParamType> {
   (params?: ParamType) : void
 }
 
-const loadActions = <T extends Record<string, IActionFun<any>>> (store)=> (name: string, actions: T) =>{
+const loadActions = <T extends Record<string, IActionFun<any>>> (store: any)=> (name: string, actions: T) =>{
   const keys = Object.keys(actions);
-  
+
   const res: {
     [actionName in keyof T]?:  Ac<Parameters<T[actionName]>[1] >
   } = {};
@@ -104,7 +104,7 @@ function moox<T extends Record<string,  any>, S, MS extends {
   [modelName:string]: IModel<T, S>
 }>(models: MS, customConfig: IConfig = {}){
   const reducers: any = {}
-  
+
   const keys = Object.keys(models);
   const storeConfig : IConfig= {
     middleware:[],
@@ -123,8 +123,8 @@ function moox<T extends Record<string,  any>, S, MS extends {
 
   const middleware = defaultMiddleware.concat(storeConfig.middleware);
   const funMiddleware = applyMiddleware(...middleware);
-  const store = createStore(combineReducers(reducers), 
-    storeConfig.preloadedState, 
+  const store = createStore(combineReducers(reducers),
+    storeConfig.preloadedState,
     storeConfig.enhancer? compose(funMiddleware,storeConfig.enhancer): funMiddleware
   );
 
@@ -141,12 +141,13 @@ function moox<T extends Record<string,  any>, S, MS extends {
     }
   }
 
+  //@ts-ignore
   const Actions: {
-    [name in keyof MS]?: {
+    [name in keyof MS]: {
       [action in keyof MS[name]['actions']] : Ac<Parameters<MS[name]['actions'][action]>[1] >
     }
   } = {};
-  
+
   keys.forEach(name=>{
     const res = loadActions(store)( name, models[name].actions);
     // @ts-ignore
