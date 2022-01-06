@@ -12,6 +12,7 @@
 *.report
 *.lcov
 lib-cov
+package-lock.json
 
 node_modules/
 .npm
